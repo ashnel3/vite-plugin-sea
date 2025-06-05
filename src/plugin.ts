@@ -1,4 +1,3 @@
-import { SEA_CONFIG_FILENAME } from './const'
 import { spawn, type SpawnOptions } from 'node:child_process'
 import fs from 'node:fs/promises'
 import { join, basename, dirname } from 'node:path'
@@ -97,7 +96,7 @@ export const sea = (options: SeaOptions): Plugin => ({
       main: join(outOpts.file ? dirname(outOpts.file) : outOpts.dir!, Object.keys(bundle)[0]),
       output: join(root, 'sea-prep.blob'),
     }
-    const configPath = join(root, SEA_CONFIG_FILENAME)
+    const configPath = join(root, 'sea-config.json')
     const out = options.output || join(this.environment.config.root, 'out.exe')
     const node = join(root, 'node.exe')
     const spawn = spawner({ shell: true })
