@@ -1,0 +1,9 @@
+node_modules
+build
+dist
+
+# lockfiles
+*-lock.json
+*-lock.yaml
+*.lockb
+*.lock

@@ -1,0 +1,18 @@
+{
+  "extends": "./tsconfig.app.json",
+  "compilerOptions": {
+    /* Visit https://aka.ms/tsconfig to read more about this file */
+
+    /* Projects */
+    "incremental": true,
+    "composite": true,
+    "tsBuildInfoFile": "node_modules/.cache/tsconfig.node.tsbuildinfo",
+
+    /* Modules */
+    "rootDir": "./",
+
+    /* Emit */
+    "noEmit": true
+  },
+  "include": ["vite*.ts"]
+}
