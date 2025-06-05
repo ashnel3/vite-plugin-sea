@@ -7,11 +7,11 @@ import type { Plugin } from 'vite'
 
 /** vite-plugin-sea options */
 export interface SeaOptions {
-  /** main filepath */
+  /** script file path */
   entry: string
-  /** sea config */
+  /** sea config overrides */
   config?: Omit<SeaConfig, 'main' | 'output'>
-  /** executable output (default: dist/out.exe) */
+  /** executable output path (default: dist/out.exe) */
   output?: string
   /** use recommended vite configuration (default: true) */
   useRecommendedConfig?: boolean
@@ -67,7 +67,6 @@ export const sea = (options: SeaOptions): Plugin => ({
   name: 'vite:sea',
   enforce: 'post',
   version: VERSION,
-
   config(config) {
     if (options.useRecommendedConfig === false) {
       return
@@ -91,15 +90,11 @@ export const sea = (options: SeaOptions): Plugin => ({
     }
     config.ssr = { noExternal: true, target: 'node' }
   },
-
   async writeBundle(outOpts, bundle) {
     const root = join(this.environment.config.root, 'node_modules/.sea')
     const config: SeaConfig = {
       disableExperimentalSEAWarning: true,
-      main: join(
-        outOpts.file ? dirname(outOpts.file) : outOpts.dir!,
-        Object.keys(bundle)[0],
-      ),
+      main: join(outOpts.file ? dirname(outOpts.file) : outOpts.dir!, Object.keys(bundle)[0]),
       output: join(root, 'sea-prep.blob'),
     }
     const configPath = join(root, SEA_CONFIG_FILENAME)
@@ -126,17 +121,14 @@ export const sea = (options: SeaOptions): Plugin => ({
     }
 
     // inject sea blob
-    await spawn(
-      'node',
-      [
-        join(this.environment.config.root, 'node_modules/postject/dist/cli.js'),
-        node,
-        'NODE_SEA_BLOB',
-        config.output,
-        '--sentinel-fuse',
-        'NODE_SEA_FUSE_fce680ab2cc467b6e072b8b5df1996b2',
-      ]
-    )
+    await spawn('node', [
+      join(this.environment.config.root, 'node_modules/postject/dist/cli.js'),
+      node,
+      'NODE_SEA_BLOB',
+      config.output,
+      '--sentinel-fuse',
+      'NODE_SEA_FUSE_fce680ab2cc467b6e072b8b5df1996b2',
+    ])
 
     // create finished executable
     await fs.mkdir(dirname(out), { recursive: true })
