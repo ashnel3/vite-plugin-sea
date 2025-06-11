@@ -1,7 +1,6 @@
-import { spawn, type SpawnOptions } from 'node:child_process'
 import fs from 'node:fs/promises'
+import { spawn, type SpawnOptions } from 'node:child_process'
 import { join, basename, dirname } from 'node:path'
-
 import type { Plugin } from 'vite'
 
 /** vite-plugin-sea options */
@@ -66,28 +65,24 @@ export const sea = (options: SeaOptions): Plugin => ({
   name: 'vite:sea',
   enforce: 'post',
   version: VERSION,
-  config(config) {
+  config() {
     if (options.useRecommendedConfig === false) {
       return
     }
-    if (config.build || config.ssr) {
-      console.warn('[vite:sea] build configuration will be overwritten!')
-    }
     // plugin recommended settings
-    config.build = {
-      lib: {
-        entry: {
-          [basename(options.entry).split('.')[0]]: options.entry,
+    return {
+      build: {
+        lib: {
+          entry: { [basename(options.entry).split('.')[0]]: options.entry },
+          formats: ['cjs'],
         },
-        formats: ['cjs'],
+        rollupOptions: {
+          output: { inlineDynamicImports: true },
+        },
+        ssr: true,
       },
-      rollupOptions: {
-        output: { inlineDynamicImports: true },
-      },
-      ssr: true,
-      outDir: config.build?.outDir,
+      ssr: { noExternal: true, target: 'node' },
     }
-    config.ssr = { noExternal: true, target: 'node' }
   },
   async writeBundle(outOpts, bundle) {
     const root = join(this.environment.config.root, 'node_modules/.sea')
